@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:sharek/add_fake_data_for_test.dart';
 import 'package:sharek/widgets/auth_form_widget.dart';
 
 class LoginPage extends StatelessWidget {
@@ -27,6 +29,7 @@ class LoginPage extends StatelessWidget {
       ],
       buttonText: "تسجيل الدخول",
       onSubmit: () {
+        // Get.to(AddFakeDataForTest());
         // مؤقت: يشتغل للتجربة
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('تم تسجيل الدخول بنجاح (تجريبي)')),

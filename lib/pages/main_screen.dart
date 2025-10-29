@@ -3,13 +3,10 @@ import 'package:get/get.dart';
 import 'package:sharek/main.dart';
 import 'package:sharek/pages/add_page.dart';
 import 'package:sharek/pages/home_chat_page.dart';
-
 import 'package:sharek/pages/home_page.dart';
-import 'package:sharek/pages/login_page.dart';
 import 'package:sharek/pages/my_donations_page.dart';
 import 'package:sharek/pages/my_requests_page.dart';
 import 'package:sharek/pages/profile_page.dart';
-import 'package:sharek/pages/request_page.dart';
 import 'package:sharek/pages/welcome_page.dart';
 
 class MainScreen extends StatelessWidget {
@@ -20,9 +17,9 @@ class MainScreen extends StatelessWidget {
   final pages = [
     HomePage(),
     HomeChatPage(),
-    if (userRole == "donor") AddPage(),
+    if (currentUser["user_role"] == "donor") AddPage(),
     isLogin ? ProfilePage() : WelcomePage(),
-    userRole == 'donor' ? MyDonationsPage() : MyRequestsPage(),
+    currentUser["user_role"] == 'donor' ? MyDonationsPage() : MyRequestsPage(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -34,7 +31,7 @@ class MainScreen extends StatelessWidget {
           child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
             currentIndex: _currentIndex.value,
-            selectedItemColor: Color.fromARGB(255, 157, 192, 138),
+            selectedItemColor: projectColors.secondaryColor,
             unselectedItemColor: Colors.grey,
             onTap: (index) {
               _currentIndex.value = index;
@@ -45,7 +42,7 @@ class MainScreen extends StatelessWidget {
                 label: "الرئيسية",
               ),
               BottomNavigationBarItem(icon: Icon(Icons.chat), label: "دردشة"),
-              if (userRole == "donor")
+              if (currentUser["user_role"] == "donor")
                 BottomNavigationBarItem(
                   icon: Icon(Icons.add_circle_outline),
                   label: "اضافة",
@@ -56,7 +53,9 @@ class MainScreen extends StatelessWidget {
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.mail),
-                label: userRole == "donor" ? "تبرعاتي" : "طلباتي",
+                label: currentUser["user_role"] == "donor"
+                    ? "تبرعاتي"
+                    : "طلباتي",
               ),
             ],
           ),

@@ -38,6 +38,8 @@ dependencies:
   dartx: ^1.2.0
   supabase_flutter: ^2.10.1
   image_picker: ^1.2.0
+  connectivity_plus: ^7.0.0
+
 
 
 dev_dependencies:

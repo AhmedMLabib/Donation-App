@@ -1,14 +1,19 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:sharek/main.dart';
+import 'package:sharek/services/request_serv.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RequestPage extends StatelessWidget {
   RequestPage({super.key});
   final item = Get.arguments;
   final reasonController = TextEditingController();
   final enableBtn = false.obs;
-  sendRequest() {
-    Get.snackbar("Reason", reasonController.text);
-  }
+  final enableBtn1 = false.obs;
+  final file = Rxn<File>();
+  final isLoading = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +24,7 @@ class RequestPage extends StatelessWidget {
           child: Image.asset(
             'assets/images/Logo black.png',
             height: 40,
-            color: Color.fromARGB(255, 99, 151, 110),
+            color: projectColors.mainColor,
           ),
         ),
       ),
@@ -48,7 +53,7 @@ class RequestPage extends StatelessWidget {
                         child: Row(
                           children: [
                             Icon(Icons.location_on, size: 16),
-                            Text(item['location'] as String),
+                            Text(item['usersData']["user_address"] as String),
                             Spacer(),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,13 +61,14 @@ class RequestPage extends StatelessWidget {
                                 Row(
                                   children: [
                                     Text(
-                                      item['userName'] as String,
+                                      item['usersData']["user_name"] as String,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18,
                                       ),
                                     ),
-                                    if (item['isVerified'] as bool) ...[
+                                    if (item['usersData']["user_is_verfied"]
+                                        as bool) ...[
                                       SizedBox(width: 5),
                                       Icon(
                                         Icons.check_circle,
@@ -77,13 +83,18 @@ class RequestPage extends StatelessWidget {
                                     ],
                                   ],
                                 ),
-                                Text(item['date'] as String),
+                                Text(
+                                  item['created_at'].toString().substring(
+                                    0,
+                                    10,
+                                  ),
+                                ),
                               ],
                             ),
                             SizedBox(width: 10),
                             CircleAvatar(
-                              backgroundImage: AssetImage(
-                                item['userProfilePic'] as String,
+                              backgroundImage: NetworkImage(
+                                item['usersData']["user_image_url"] as String,
                               ),
                             ),
                           ],
@@ -92,7 +103,7 @@ class RequestPage extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(right: 8.0, bottom: 8),
                         child: Text(
-                          item['productName'] as String,
+                          item['item_name'] as String,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -108,8 +119,8 @@ class RequestPage extends StatelessWidget {
 
                         child: Stack(
                           children: [
-                            Image.asset(
-                              item['mainPicture'] as String,
+                            Image.network(
+                              item['item_image_url'] as String,
                               width: double.infinity,
                               height: 200,
                               fit: BoxFit.cover,
@@ -123,9 +134,8 @@ class RequestPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    Color.fromARGB(255, 99, 151, 110),
+                                    projectColors.mainColor,
                                     Color.fromARGB(120, 99, 151, 110),
-
                                     Colors.transparent,
                                   ],
                                   begin: Alignment.bottomCenter,
@@ -163,21 +173,63 @@ class RequestPage extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 20),
+                      TextButton(
+                        onPressed: () async {
+                          final picker = ImagePicker();
+                          final result = await picker.pickImage(
+                            source: ImageSource.gallery,
+                          );
+
+                          if (result != null) {
+                            file.value = File(result.path);
+                            enableBtn1.value = true;
+                          }
+                        },
+                        child: Text(
+                          'مرفق صورة',
+                          style: TextStyle(
+                            color: projectColors.mainColor,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Obx(
+                        () => file.value != null
+                            ? Image.file(file.value!, width: 150, height: 150)
+                            : SizedBox.shrink(),
+                      ),
+
                       Obx(
                         () => ElevatedButton(
-                          onPressed: enableBtn.value
-                              ? () => sendRequest()
+                          onPressed:
+                              enableBtn.value &
+                                  enableBtn1.value &
+                                  !isLoading.value
+                              ? () async {
+                                  isLoading.value = true;
+                                  await RequestServ().sendRequest(
+                                    item,
+                                    reasonController.text.trim(),
+                                    file,
+                                  );
+                                }
                               : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 99, 151, 110),
+                            backgroundColor: projectColors.mainColor,
                           ),
-                          child: Text(
-                            "أطلب",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          child: isLoading.value
+                              ? CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                )
+                              : Text(
+                                  "أطلب",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                         ),
                       ),
                     ],

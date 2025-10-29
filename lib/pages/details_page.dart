@@ -15,7 +15,7 @@ class DetailsPage extends StatelessWidget {
           child: Image.asset(
             'assets/images/Logo black.png',
             height: 40,
-            color: Color.fromARGB(255, 99, 151, 110),
+            color: projectColors.mainColor,
           ),
         ),
       ),
@@ -34,8 +34,8 @@ class DetailsPage extends StatelessWidget {
 
                 child: Stack(
                   children: [
-                    Image.asset(
-                      item['mainPicture'] as String,
+                    Image.network(
+                      item['item_image_url'] as String,
                       width: double.infinity,
                       height: 200,
                       fit: BoxFit.cover,
@@ -50,7 +50,7 @@ class DetailsPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Color.fromARGB(255, 99, 151, 110),
+                            projectColors.mainColor,
                             Color.fromARGB(120, 99, 151, 110),
 
                             Colors.transparent,
@@ -74,13 +74,16 @@ class DetailsPage extends StatelessWidget {
                       Column(
                         children: [
                           Text(
-                            item["location"] as String,
+                            item["usersData"]["user_address"] as String,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
                             ),
                           ),
-                          Text(item["date"], style: TextStyle(fontSize: 12)),
+                          Text(
+                            item["created_at"].toString().substring(0, 10),
+                            style: TextStyle(fontSize: 12),
+                          ),
                         ],
                       ),
                       Spacer(),
@@ -90,17 +93,19 @@ class DetailsPage extends StatelessWidget {
                         child: Column(
                           children: [
                             Text(
-                              item["userName"] as String,
+                              item["usersData"]["user_name"] as String,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
                               ),
                             ),
                             Text(
-                              item["isVerified"] ? "موثق" : "غير موثق",
+                              item["usersData"]["user_is_verfied"]
+                                  ? "موثق"
+                                  : "غير موثق",
                               style: TextStyle(
-                                color: item["isVerified"]
-                                    ? Color.fromARGB(255, 99, 151, 110)
+                                color: item["usersData"]["user_is_verfied"]
+                                    ? projectColors.mainColor
                                     : Colors.red,
                               ),
                             ),
@@ -109,8 +114,8 @@ class DetailsPage extends StatelessWidget {
                       ),
 
                       CircleAvatar(
-                        backgroundImage: AssetImage(
-                          item['userProfilePic'] as String,
+                        backgroundImage: NetworkImage(
+                          item["usersData"]["user_image_url"] as String,
                         ),
                       ),
                     ],
@@ -119,30 +124,30 @@ class DetailsPage extends StatelessWidget {
               ),
               SizedBox(height: 10),
               Text(
-                item["productName"] as String,
+                item["item_name"] as String,
                 textDirection: TextDirection.rtl,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
               ),
               SizedBox(height: 10),
               Text(
-                item["description"] as String,
+                item["item_description"] as String,
                 textDirection: TextDirection.rtl,
                 style: TextStyle(
                   fontSize: 18,
-                  color: Color.fromARGB(255, 99, 151, 110),
+                  color: projectColors.mainColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 10),
               SizedBox(
                 width: double.infinity,
-                child: userRole != "donor"
+                child: currentUser["user_role"] == "user"
                     ? ElevatedButton(
                         onPressed: () => {
                           Get.to(RequestPage(), arguments: item),
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color.fromARGB(255, 99, 151, 110),
+                          backgroundColor: projectColors.mainColor,
                           foregroundColor: Colors.white,
                         ),
                         child: Text(
