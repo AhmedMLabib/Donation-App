@@ -7,7 +7,7 @@ import 'package:sharek/pages/notifications_page.dart';
 import '../services/home_serv.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -130,103 +130,127 @@ class _HomePageState extends State<HomePage> {
               // Categories
               Obx(
                 () => categories.isNotEmpty
-                    ? GridView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: categories.length > 4
-                            ? 4
-                            : categories.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 8,
-                          mainAxisExtent: 30,
-                        ),
-                        itemBuilder: (context, index) {
-                          if (categories.length > 4 && index == 0) {
-                            return InkWell(
-                              onTap: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(20),
+                    ? Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: GridView.builder(
+                          shrinkWrap: true,
+
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: categories.length > 4
+                              ? 4
+                              : categories.length,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 4,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 8,
+                                mainAxisExtent: 30,
+                              ),
+                          itemBuilder: (context, index) {
+                            if (categories.length > 4 && index == 0) {
+                              return InkWell(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20),
+                                      ),
+                                    ),
+                                    builder: (context) {
+                                      return Directionality(
+                                        textDirection: TextDirection.rtl,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Text(
+                                                "كل التصنيفات",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 12),
+                                              GridView.builder(
+                                                shrinkWrap: true,
+                                                physics:
+                                                    NeverScrollableScrollPhysics(),
+                                                gridDelegate:
+                                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                                      crossAxisCount: 3,
+                                                      crossAxisSpacing: 10,
+                                                      mainAxisSpacing: 10,
+                                                      mainAxisExtent: 40,
+                                                    ),
+                                                itemCount: categories.length,
+                                                itemBuilder: (context, index) {
+                                                  return InkWell(
+                                                    onTap: () => filterByCat(
+                                                      categories[index],
+                                                    ),
+                                                    child: Container(
+                                                      alignment:
+                                                          Alignment.center,
+                                                      decoration: BoxDecoration(
+                                                        color: Color.fromARGB(
+                                                          255,
+                                                          99,
+                                                          151,
+                                                          110,
+                                                        ),
+
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              32,
+                                                            ),
+                                                      ),
+                                                      child: Text(
+                                                        categories[index]["category"],
+                                                        style: const TextStyle(
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: projectColors.secondaryColor,
+                                    borderRadius: BorderRadius.circular(32),
+                                  ),
+
+                                  child: Text(
+                                    "...أخرى",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  builder: (context) {
-                                    return Directionality(
-                                      textDirection: TextDirection.rtl,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Text(
-                                              "كل التصنيفات",
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 12),
-                                            GridView.builder(
-                                              shrinkWrap: true,
-                                              physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              gridDelegate:
-                                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                                    crossAxisCount: 3,
-                                                    crossAxisSpacing: 10,
-                                                    mainAxisSpacing: 10,
-                                                    mainAxisExtent: 40,
-                                                  ),
-                                              itemCount: categories.length,
-                                              itemBuilder: (context, index) {
-                                                return InkWell(
-                                                  onTap: () => filterByCat(
-                                                    categories[index],
-                                                  ),
-                                                  child: Container(
-                                                    alignment: Alignment.center,
-                                                    decoration: BoxDecoration(
-                                                      color: Color.fromARGB(
-                                                        255,
-                                                        99,
-                                                        151,
-                                                        110,
-                                                      ),
-
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            32,
-                                                          ),
-                                                    ),
-                                                    child: Text(
-                                                      categories[index]["category"],
-                                                      style: const TextStyle(
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
+                                ),
+                              );
+                            }
+                            return InkWell(
+                              onTap: () => filterByCat(categories[index]),
                               child: Container(
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
                                   color: projectColors.secondaryColor,
                                   borderRadius: BorderRadius.circular(32),
                                 ),
-
                                 child: Text(
-                                  "...أخرى",
+                                  categories[index]["category"],
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: Colors.white,
@@ -235,26 +259,8 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                             );
-                          }
-                          return InkWell(
-                            onTap: () => filterByCat(categories[index]),
-                            child: Container(
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: projectColors.secondaryColor,
-                                borderRadius: BorderRadius.circular(32),
-                              ),
-                              child: Text(
-                                categories[index]["category"],
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          );
-                        },
+                          },
+                        ),
                       )
                     : SizedBox(),
               ),

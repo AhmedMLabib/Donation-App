@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sharek/main.dart';
 import 'package:sharek/services/request_serv.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class RequestPage extends StatelessWidget {
   RequestPage({super.key});

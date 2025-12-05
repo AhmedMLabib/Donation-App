@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'terms_checkbox_widget.dart';
 
 class AuthFormWidget extends StatefulWidget {
@@ -7,8 +11,9 @@ class AuthFormWidget extends StatefulWidget {
   final List<Map<String, dynamic>>
   fields; // كل حقل: label + obscure + validator
   final String buttonText;
-  final VoidCallback onSubmit;
+  final onSubmit;
   final Color backgroundColor;
+  final bool showRole;
 
   const AuthFormWidget({
     super.key,
@@ -18,6 +23,7 @@ class AuthFormWidget extends StatefulWidget {
     required this.buttonText,
     required this.onSubmit,
     this.backgroundColor = const Color(0xFF98BD89),
+    this.showRole = false,
   });
 
   @override
@@ -28,12 +34,16 @@ class _AuthFormWidgetState extends State<AuthFormWidget> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {};
   bool _agreeToTerms = false;
-
   @override
   void initState() {
     super.initState();
     for (var field in widget.fields) {
-      _controllers[field['label']] = TextEditingController();
+      if (field['controller'] == null) {
+        _controllers[field['label']] = TextEditingController();
+      } else {
+        _controllers[field['label']] =
+            field['controller'] as TextEditingController;
+      }
     }
   }
 
@@ -44,6 +54,19 @@ class _AuthFormWidgetState extends State<AuthFormWidget> {
     }
     super.dispose();
   }
+
+  Map<String, dynamic> _getFormData() {
+    final Map<String, dynamic> data = {};
+    for (var field in widget.fields) {
+      final label = field['label'] as String;
+      final controller = _controllers[label];
+      data[label] = controller?.text ?? '';
+    }
+    return data;
+  }
+
+  var _selectedRole = "user";
+  final file = Rxn<File>();
 
   @override
   Widget build(BuildContext context) {
@@ -82,28 +105,6 @@ class _AuthFormWidgetState extends State<AuthFormWidget> {
                   color: Colors.white,
                 ),
               ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/facebook_logo.png',
-                    height: 30,
-                    width: 30,
-                  ),
-                  const SizedBox(width: 20),
-                  const Text(
-                    'أو',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Image.asset('assets/images/google_logo.png', height: 30, width: 30),
-                ],
-              ),
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -121,6 +122,7 @@ class _AuthFormWidgetState extends State<AuthFormWidget> {
                           (field) => Padding(
                             padding: const EdgeInsets.only(bottom: 20),
                             child: TextFormField(
+                              textDirection: TextDirection.rtl,
                               controller: _controllers[field['label']],
                               obscureText: field['obscure'] ?? false,
                               decoration: InputDecoration(
@@ -130,6 +132,50 @@ class _AuthFormWidgetState extends State<AuthFormWidget> {
                               validator: field['validator'],
                             ),
                           ),
+                        ),
+                        if (widget.showRole)
+                          DropdownButtonFormField<String>(
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: "اختر نوع الحساب",
+                            ),
+                            value: _selectedRole,
+                            items: const [
+                              DropdownMenuItem(
+                                value: "user",
+                                child: Text("مستفيد"),
+                              ),
+                              DropdownMenuItem(
+                                value: "donor",
+                                child: Text("متبرع"),
+                              ),
+                            ],
+                            onChanged: (val) {
+                              setState(() {
+                                _selectedRole = val!;
+                              });
+                            },
+                            validator: (value) =>
+                                value == null ? "اختر نوع الحساب" : null,
+                          ),
+                        if (widget.showRole)
+                          TextButton(
+                            onPressed: () async {
+                              final picker = ImagePicker();
+                              final result = await picker.pickImage(
+                                source: ImageSource.gallery,
+                              );
+
+                              if (result != null) {
+                                file.value = File(result.path);
+                              }
+                            },
+                            child: Text('Profile Image'),
+                          ),
+                        Obx(
+                          () => file.value != null
+                              ? Image.file(file.value!, width: 150, height: 150)
+                              : SizedBox.shrink(),
                         ),
                         TermsCheckboxWidget(
                           value: _agreeToTerms,
@@ -151,7 +197,12 @@ class _AuthFormWidgetState extends State<AuthFormWidget> {
                                 return;
                               }
                               // هنا نقبل أي يوزر مباشرة بدون تسجيل للتجربه
-                              widget.onSubmit();
+                              final formData = _getFormData();
+                              if (widget.showRole) {
+                                formData['role'] = _selectedRole;
+                                formData['file'] = file;
+                              }
+                              widget.onSubmit(formData);
                             }
                           },
                           style: ElevatedButton.styleFrom(

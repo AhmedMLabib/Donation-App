@@ -27,6 +27,26 @@ class HomeServ {
     }
   }
 
+  loadDistinctCat() async {
+    if (!await Utils().connected()) {
+      Get.snackbar("خطأ في الاتصال", "تأكد من اتصالك بالانترنت وحاول مرة اخرى");
+      return [];
+    }
+    try {
+      final catRes = await cloud
+          .from("categories")
+          .select("category_id , category");
+      print(catRes);
+      return catRes;
+    } catch (e) {
+      Get.snackbar(
+        "خطأ في جلب البانات",
+        "حدث خطأ ما اثناء جلب البيانات، حاول مرة اخرى",
+      );
+      return [];
+    }
+  }
+
   loadNotifications() async {
     final userID = currentUser['user_id'];
     if (userID != null) {

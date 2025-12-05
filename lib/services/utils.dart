@@ -11,14 +11,14 @@ class Utils {
         connectivityResult.contains(ConnectivityResult.wifi);
   }
 
-  Future<String> uploadImage(file) async {
+  Future<String> uploadImage(suf, file) async {
     if (!await connected()) {
       Get.snackbar("خطأ في الاتصال", "تأكد من اتصالك بالانترنت وحاول مرة اخرى");
       return "";
     }
     try {
       final ext = file.value!.path.split('.').last;
-      final fileName = "req-${DateTime.now().millisecondsSinceEpoch}.$ext";
+      final fileName = "$suf-${DateTime.now().millisecondsSinceEpoch}.$ext";
       await cloud.storage
           .from('Images')
           .upload(
@@ -26,7 +26,6 @@ class Utils {
             file.value!,
             fileOptions: FileOptions(upsert: true),
           );
-
       return cloud.storage.from('Images').getPublicUrl(fileName);
     } catch (e) {
       Get.snackbar(

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sharek/Colors/Colors.dart';
 import 'chat_page.dart';
-import 'notifications_page.dart';
 
 class HomeChatPage extends StatelessWidget {
   HomeChatPage({super.key});

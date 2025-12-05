@@ -16,10 +16,13 @@ class MainScreen extends StatelessWidget {
 
   final pages = [
     HomePage(),
-    HomeChatPage(),
+    isLogin ? HomeChatPage() : WelcomePage(),
     if (currentUser["user_role"] == "donor") AddPage(),
     isLogin ? ProfilePage() : WelcomePage(),
-    currentUser["user_role"] == 'donor' ? MyDonationsPage() : MyRequestsPage(),
+    if (isLogin)
+      currentUser["user_role"] == 'donor' ? MyDonationsPage() : MyRequestsPage()
+    else
+      WelcomePage(),
   ];
   @override
   Widget build(BuildContext context) {

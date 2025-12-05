@@ -1,25 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sharek/add_fake_data_for_test.dart';
+import 'package:sharek/services/auth_serv.dart';
 import 'package:sharek/widgets/auth_form_widget.dart';
 
+import 'main_screen.dart';
+
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return AuthFormWidget(
-      title: "مرحبًا بك مرة أخرى 🌿",
+      title: "🌿 مرحبًا بك مرة أخرى",
       subtitle: "سجل دخولك للمتابعة",
       fields: [
         {
-          'label': 'البريد الإلكتروني',
+          'label': 'email',
+          "controller": emailController,
           'validator': (value) {
             if (value == null || value.isEmpty) return 'أدخل البريد الإلكتروني';
             return null; // يقبل أي نص بعد ما يملاه للتجربه
           },
         },
         {
-          'label': 'كلمة المرور',
+          'label': 'password',
+          "controller": passwordController,
           'obscure': true,
           'validator': (value) {
             if (value == null || value.isEmpty) return 'أدخل كلمة المرور';
@@ -28,12 +34,12 @@ class LoginPage extends StatelessWidget {
         },
       ],
       buttonText: "تسجيل الدخول",
-      onSubmit: () {
-        // Get.to(AddFakeDataForTest());
-        // مؤقت: يشتغل للتجربة
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تم تسجيل الدخول بنجاح (تجريبي)')),
-        );
+      onSubmit: (formData) async {
+        await AuthServ().login({
+          "email": formData["email"],
+          "password": formData['password'],
+        });
+        Get.offAll(MainScreen());
       },
     );
   }

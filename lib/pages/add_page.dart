@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:sharek/pages/main_screen.dart';
+import 'package:sharek/services/home_serv.dart';
+import 'package:sharek/services/utils.dart';
 
-import 'notifications_page.dart';
+import '../main.dart';
 
 class AddPage extends StatefulWidget {
   const AddPage({super.key});
@@ -14,11 +20,30 @@ class _AddPageState extends State<AddPage> {
   final nameCont = TextEditingController();
   final descriptionCont = TextEditingController();
 
-  final List<String> categories = ["ملابس", "تكنولوجيا", "كتب", "أخرى"];
+  final categories = [].obs;
+  final categoriesMaps = [].obs;
+  final file = Rxn<File>();
+
+  final enableBtn1 = false.obs;
   String selectedCategory = "ملابس";
 
-  final List<String> otherCategories = ["أثاث", "ألعاب", "أدوات", "طعام"];
+  final List<String> otherCategories = [];
   String? selectedOther;
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  loadData() async {
+    final res = await HomeServ().loadDistinctCat();
+    final catRes = res;
+    categoriesMaps.assignAll(catRes);
+    final List<String> catList = catRes
+        .map<String>((e) => e["category"].toString())
+        .toList();
+    categories.assignAll(catList);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,11 +82,14 @@ class _AddPageState extends State<AddPage> {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(
-                          "assets/images/laptop.jpg",
-                          height: 200,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
+                        child: Obx(
+                          () => file.value != null
+                              ? Image.file(
+                                  file.value!,
+                                  width: double.infinity,
+                                  height: 200,
+                                )
+                              : SizedBox(height: 200, width: double.infinity),
                         ),
                       ),
                       Container(
@@ -72,7 +100,17 @@ class _AddPageState extends State<AddPage> {
                         ),
                         child: IconButton(
                           icon: const Icon(Icons.add, color: Colors.black),
-                          onPressed: () {},
+                          onPressed: () async {
+                            final picker = ImagePicker();
+                            final result = await picker.pickImage(
+                              source: ImageSource.gallery,
+                            );
+
+                            if (result != null) {
+                              file.value = File(result.path);
+                              enableBtn1.value = true;
+                            }
+                          },
                         ),
                       ),
                     ],
@@ -113,22 +151,29 @@ class _AddPageState extends State<AddPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Wrap(
-                    spacing: 8,
-                    children: categories.map((cat) {
-                      final isSelected = selectedCategory == cat;
-                      return ChoiceChip(
-                        label: Text(cat, textDirection: TextDirection.rtl),
-                        selected: isSelected,
-                        onSelected: (val) {
-                          setState(() {
-                            selectedCategory = cat;
-                            selectedOther = null;
-                          });
-                        },
-                        selectedColor: const Color.fromARGB(255, 99, 151, 110),
-                      );
-                    }).toList(),
+                  Obx(
+                    () => Wrap(
+                      spacing: 8,
+                      children: categories.map((cat) {
+                        final isSelected = selectedCategory == cat;
+                        return ChoiceChip(
+                          label: Text(cat, textDirection: TextDirection.rtl),
+                          selected: isSelected,
+                          onSelected: (val) {
+                            setState(() {
+                              selectedCategory = cat;
+                              selectedOther = null;
+                            });
+                          },
+                          selectedColor: const Color.fromARGB(
+                            255,
+                            99,
+                            151,
+                            110,
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   if (selectedCategory == "أخرى")
@@ -152,31 +197,23 @@ class _AddPageState extends State<AddPage> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: ElevatedButton(
-                      onPressed: () {
-                        String chosenCategory =
-                            selectedCategory == "أخرى" && selectedOther != null
-                            ? selectedOther!
-                            : selectedCategory;
+                      onPressed: () async {
+                        final url = await Utils().uploadImage("req", file);
+                        final int id =
+                            categoriesMaps.firstWhere(
+                                  (e) => e["category"] == selectedCategory,
+                                  orElse: () => null,
+                                )?["category_id"]
+                                as int;
 
-                        Get.snackbar(
-                          "تم إضافة التبرع",
-                          "الاسم: ${nameCont.text}, الفئة: $chosenCategory",
-                          snackPosition: SnackPosition.TOP,
-                          margin: const EdgeInsets.all(12),
-                          duration: const Duration(seconds: 3),
-                          titleText: const Text(
-                            "تم إضافة التبرع",
-                            textDirection: TextDirection.rtl,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          messageText: Text(
-                            "الاسم: ${nameCont.text}, الفئة: $chosenCategory",
-                            textDirection: TextDirection.rtl,
-                          ),
-                        );
+                        await cloud.from('items').insert({
+                          'item_name': nameCont.text,
+                          'item_description': descriptionCont.text,
+                          "item_image_url": url,
+                          "category_id": id,
+                          "donor_id": currentUser["user_id"],
+                        });
+                        Get.offAll(MainScreen());
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,

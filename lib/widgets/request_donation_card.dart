@@ -20,7 +20,7 @@ class RequestDonationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: Image.asset(imagePath, width: 50, height: 50),
+        leading: Image.network(imagePath, width: 50, height: 50),
         title: Text(
           title,
           style: const TextStyle(fontWeight: FontWeight.bold),

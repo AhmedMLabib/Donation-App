@@ -5,7 +5,7 @@ import '../main.dart';
 
 class RequestServ {
   sendRequest(item, reqReason, imgFile) async {
-    final attachmentUrl = await Utils().uploadImage(imgFile);
+    final attachmentUrl = await Utils().uploadImage( "req" , imgFile);
     final recipientId = currentUser["user_id"];
     final status = "pending";
     final donorId = item["usersData"]["user_id"];

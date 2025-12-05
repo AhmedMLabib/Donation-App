@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-import 'package:sharek/add_fake_data_for_test.dart';
 import 'package:sharek/pages/main_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

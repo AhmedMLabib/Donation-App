@@ -1,25 +1,39 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sharek/pages/login_page.dart';
+import 'package:sharek/services/auth_serv.dart';
 import 'package:sharek/widgets/auth_form_widget.dart';
 
 class RegesterPage extends StatelessWidget {
-  const RegesterPage({super.key});
+  RegesterPage({super.key});
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final rePasswordController = TextEditingController();
+  final nameController = TextEditingController();
+  final roleController = TextEditingController();
+  final addressController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    final role = ModalRoute.of(context)!.settings.arguments as String?;
-
     return AuthFormWidget(
-      title: "أهلاً بك في شارك 🌿",
+      title: "🌿 أهلاً بك في شارك",
       subtitle: "أنشئ حسابك الجديد الآن",
+      showRole: true,
       fields: [
         {
-          'label': 'اسم المستخدم',
+          'label': 'name',
           'validator': (value) =>
               value == null || value.isEmpty ? 'أدخل اسم المستخدم' : null,
         },
         {
-          'label': 'البريد الإلكتروني',
+          'label': 'address',
+          'validator': (value) =>
+              value == null || value.isEmpty ? 'أدخل العنوان ' : null,
+        },
+        {
+          'label': 'email',
           'validator': (value) {
             if (value == null || value.isEmpty) return 'أدخل البريد الإلكتروني';
             if (!value.contains('@')) return 'البريد الإلكتروني غير صالح';
@@ -27,7 +41,7 @@ class RegesterPage extends StatelessWidget {
           },
         },
         {
-          'label': 'كلمة المرور',
+          'label': 'password',
           'obscure': true,
           'validator': (value) {
             if (value == null || value.isEmpty) return 'أدخل كلمة المرور';
@@ -36,7 +50,7 @@ class RegesterPage extends StatelessWidget {
           },
         },
         {
-          'label': 'تأكيد كلمة المرور',
+          'label': 'rePassword',
           'obscure': true,
           'validator': (value) {
             if (value != null && value.isEmpty) {
@@ -47,7 +61,8 @@ class RegesterPage extends StatelessWidget {
         },
       ],
       buttonText: "إنشاء الحساب",
-      onSubmit: () {
+      onSubmit: (formData) async {
+        await AuthServ().signUp(formData);
         Get.to(LoginPage());
       },
     );

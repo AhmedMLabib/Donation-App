@@ -1,14 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:sharek/services/items_serv.dart';
 import 'package:sharek/widgets/request_donation_card.dart';
 
-class MyDonationsPage extends StatelessWidget {
+class MyDonationsPage extends StatefulWidget {
   const MyDonationsPage({super.key});
+
+  @override
+  State<MyDonationsPage> createState() => _MyDonationsPageState();
+}
+
+class _MyDonationsPageState extends State<MyDonationsPage> {
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  final items = [].obs;
+  loadData() async {
+    final res = await ItemsServ().loadData();
+    items.assignAll(res);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: DefaultTabController(
-        length: 2,
+        length: 1,
         child: Scaffold(
           appBar: AppBar(
             title: const Text(
@@ -20,63 +40,32 @@ class MyDonationsPage extends StatelessWidget {
               ),
             ),
             centerTitle: true,
-            bottom: const TabBar(
-              indicatorColor: Colors.green,
-              labelColor: Colors.green,
-              labelStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              tabs: [
-                Tab(text: 'تبرعات نشطة'),
-                Tab(text: 'سجل تبرعاتي'),
-              ],
-            ),
           ),
           body: TabBarView(
             children: [
-              // التبويب الأول: التبرعات النشطة
-              ListView(
-                padding: const EdgeInsets.all(10),
-                children: [
-                  RequestDonationCard(
-                    imagePath: 'assets/images/book.png',
-                    title:
-                        'مجموعة كتب في تعلم اللغة الإنجليزية لمن يريد التعلم وغير قادر على شراء الكتب',
-                    status: 'حالة التبرع: في انتظار مستفيد',
-                    buttonText: 'حذف المنشور',
-                    onButtonPressed: () {},
-                  ),
-                  RequestDonationCard(
-                    imagePath: 'assets/images/shirt.png',
-                    title: 'تيشرت رجالي مقاس 2X بحالة ممتازة لمن يحتاجه',
-                    status: 'حالة التبرع: 3 أشخاص قدموا طلب',
-                    buttonText: 'تواصل مع المستفيد',
-                    onButtonPressed: () {},
-                  ),
-                  RequestDonationCard(
-                    imagePath: 'assets/images/toy.png',
-                    title:
-                        'لعبة أطفال بلاستيكية آمنة على الطفل مناسبة لعمر 3 سنوات',
-                    status: 'حالة التبرع: 1 شخص قدم طلب',
-                    buttonText: 'تواصل مع المستفيد',
-                    onButtonPressed: () {},
-                  ),
-                ],
-              ),
-              // التبويب الثاني: سجل التبرعات
-              ListView(
-                padding: const EdgeInsets.all(10),
-                children: [
-                  RequestDonationCard(
-                    imagePath: 'assets/images/wheelchair.png',
-                    title:
-                        'كرسي متحرك لذوي الاحتياجات الخاصة أو المصابين في القدم',
-                    status: 'حالة التبرع: مكتمل',
-                  ),
-                  RequestDonationCard(
-                    imagePath: 'assets/images/bag.png',
-                    title: 'شنطة مدرسية بناتي مناسبة لطفلة 8 سنوات',
-                    status: 'حالة التبرع: مكتمل',
-                  ),
-                ],
+              Obx(
+                () => ListView.builder(
+                  padding: const EdgeInsets.all(10),
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    final item = items[index];
+                    return RequestDonationCard(
+                      imagePath: item['item_image_url'],
+                      title: item['item_name'],
+                      status: item["item_description"],
+                      buttonText: 'حذف المنشور',
+                      onButtonPressed: () {
+                        ItemsServ().deleteDonation(item['item_id']).then((
+                          success,
+                        ) {
+                          if (success) {
+                            item.removeAt(index);
+                          }
+                        });
+                      },
+                    );
+                  },
+                ),
               ),
             ],
           ),
