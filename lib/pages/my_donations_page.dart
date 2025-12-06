@@ -22,7 +22,6 @@ class _MyDonationsPageState extends State<MyDonationsPage> {
     final res = await ItemsServ().loadData();
     items.assignAll(res);
   }
-
   @override
   Widget build(BuildContext context) {
     return Directionality(

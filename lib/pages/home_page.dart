@@ -50,6 +50,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.surface,
         leading: IconButton(
           icon: Icon(
             Icons.notifications_none_outlined,

@@ -15,8 +15,11 @@ class LocationService {
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
-      Get.snackbar("error", "location permissions are denied");
-      return "";
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        Get.snackbar("error", "location permissions are denied");
+        return "";
+      }
     }
 
     if (permission == LocationPermission.deniedForever) {
