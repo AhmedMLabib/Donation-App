@@ -15,7 +15,7 @@ class DetailsPage extends StatelessWidget {
           child: Image.asset(
             'assets/images/Logo black.png',
             height: 40,
-            color: projectColors.mainColor,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
       ),
@@ -50,8 +50,8 @@ class DetailsPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            projectColors.mainColor,
-                            Color.fromARGB(120, 99, 151, 110),
+                            Theme.of(context).colorScheme.surface,
+                            Theme.of(context).colorScheme.surface,
 
                             Colors.transparent,
                           ],
@@ -65,7 +65,8 @@ class DetailsPage extends StatelessWidget {
               ),
               SizedBox(height: 10),
               Card(
-                shadowColor: Colors.black,
+                color: Theme.of(context).colorScheme.primary,
+                shadowColor: Theme.of(context).colorScheme.surface,
                 elevation: 7,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -105,7 +106,7 @@ class DetailsPage extends StatelessWidget {
                                   : "غير موثق",
                               style: TextStyle(
                                 color: item["usersData"]["user_is_verfied"]
-                                    ? projectColors.mainColor
+                                    ? Theme.of(context).colorScheme.onPrimary
                                     : Colors.red,
                               ),
                             ),
@@ -134,7 +135,7 @@ class DetailsPage extends StatelessWidget {
                 textDirection: TextDirection.rtl,
                 style: TextStyle(
                   fontSize: 18,
-                  color: projectColors.mainColor,
+                  color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -147,8 +148,12 @@ class DetailsPage extends StatelessWidget {
                           Get.to(RequestPage(), arguments: item),
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: projectColors.mainColor,
-                          foregroundColor: Colors.white,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary,
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.surface,
                         ),
                         child: Text(
                           "أطلب",

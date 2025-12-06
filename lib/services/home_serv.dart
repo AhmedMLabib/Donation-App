@@ -72,4 +72,18 @@ class HomeServ {
       }
     }
   }
+
+  loadChats() async {
+    try {
+      final chat = await cloud.from("chats").select("*");
+      return chat;
+    } catch (e) {
+      print("errorrrr $e");
+      Get.snackbar(
+        "خطأ في جلب المحادثات",
+        "حدث خطأ ما اثناء جلب المحادثات، حاول مرة اخرى",
+      );
+      return [];
+    }
+  }
 }

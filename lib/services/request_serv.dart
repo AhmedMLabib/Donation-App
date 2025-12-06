@@ -5,7 +5,7 @@ import '../main.dart';
 
 class RequestServ {
   sendRequest(item, reqReason, imgFile) async {
-    final attachmentUrl = await Utils().uploadImage( "req" , imgFile);
+    final attachmentUrl = await Utils().uploadImage("req", imgFile);
     final recipientId = currentUser["user_id"];
     final status = "pending";
     final donorId = item["usersData"]["user_id"];
@@ -23,6 +23,13 @@ class RequestServ {
         "donor_id": donorId,
         "item_id": itemId,
       });
+
+      //*
+      await cloud.from("chats").insert({
+        "user_one_id": donorId,
+        "user_two_id": recipientId,
+      });
+
       Get.back();
     } catch (e) {
       Get.snackbar(

@@ -24,27 +24,27 @@ class WelcomeWidget extends StatelessWidget {
             clipper: WaveClipper(),
             child: Container(
               height: waveHeight,
-              color: const Color(0xFF98BD89),
+              color: Theme.of(context).colorScheme.primary,
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                       ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 10),
                     Text(
                       subtitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -55,7 +55,7 @@ class WelcomeWidget extends StatelessWidget {
           ),
           Expanded(
             child: Container(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 30,
@@ -70,7 +70,7 @@ class WelcomeWidget extends StatelessWidget {
                         'assets/images/logo.png',
                         height: MediaQuery.of(context).size.height * 0.2,
                         fit: BoxFit.contain,
-                        color: const Color(0xFF98BD89),
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -80,13 +80,15 @@ class WelcomeWidget extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: b['onPressed'],
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary,
                             minimumSize: const Size(double.infinity, 50),
                           ),
                           child: Text(
                             b['text'],
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.surface,
                               fontSize: 18,
                             ),
                           ),

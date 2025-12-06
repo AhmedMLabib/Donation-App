@@ -6,14 +6,39 @@ import 'package:sharek/pages/login_page.dart';
 import 'package:sharek/services/auth_serv.dart';
 import 'package:sharek/widgets/auth_form_widget.dart';
 
-class RegesterPage extends StatelessWidget {
-  RegesterPage({super.key});
+import '../services/location_serv.dart';
+
+final locationService = LocationService();
+
+class RegesterPage extends StatefulWidget {
+  const RegesterPage({super.key});
+
+  @override
+  State<RegesterPage> createState() => _RegesterPageState();
+}
+
+class _RegesterPageState extends State<RegesterPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final rePasswordController = TextEditingController();
   final nameController = TextEditingController();
   final roleController = TextEditingController();
+
+  // Controller for address field
   final addressController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    loadLocation();
+  }
+
+  Future<void> loadLocation() async {
+    final address = await locationService.getLocation();
+    setState(() {
+      addressController.text = address;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +54,7 @@ class RegesterPage extends StatelessWidget {
         },
         {
           'label': 'address',
+          'controller': addressController,
           'validator': (value) =>
               value == null || value.isEmpty ? 'أدخل العنوان ' : null,
         },

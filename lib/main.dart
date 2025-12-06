@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:sharek/Theme/theme.dart';
 import 'package:sharek/pages/main_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -38,6 +39,8 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: MainScreen(),
+      theme: lightMode,
+      darkTheme: darkMode,
     );
   }
 }

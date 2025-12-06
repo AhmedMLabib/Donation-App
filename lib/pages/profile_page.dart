@@ -8,10 +8,13 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: projectColors.mainColor,
-        title: Text('ملف المستخدم', style: TextStyle(color: Colors.white)),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: Text(
+          'ملف المستخدم',
+          style: TextStyle(color: Theme.of(context).colorScheme.surface),
+        ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -21,7 +24,7 @@ class ProfilePage extends StatelessWidget {
               width: double.infinity,
               padding: EdgeInsets.only(top: 20, bottom: 30),
               decoration: BoxDecoration(
-                color: projectColors.mainColor,
+                color: Theme.of(context).colorScheme.primary,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
@@ -34,7 +37,7 @@ class ProfilePage extends StatelessWidget {
                     children: [
                       CircleAvatar(
                         radius: 60,
-                        backgroundColor: Colors.white,
+                        backgroundColor: Theme.of(context).colorScheme.surface,
                         child: CircleAvatar(
                           radius: 58,
                           backgroundImage: NetworkImage(
@@ -49,7 +52,7 @@ class ProfilePage extends StatelessWidget {
                           child: Container(
                             padding: EdgeInsets.all(2),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.surface,
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
@@ -65,7 +68,7 @@ class ProfilePage extends StatelessWidget {
                   Text(
                     currentUser['user_name'].toString(),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
                     ),
@@ -81,7 +84,7 @@ class ProfilePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Card(
                 elevation: 4,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
@@ -97,23 +100,23 @@ class ProfilePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: projectColors.mainColor,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                       ),
-                      Divider(color: projectColors.mainColor),
+                      Divider(color: Theme.of(context).colorScheme.surface),
                       SizedBox(height: 10),
                       buildInfoRow(
                         icon: Icons.email,
                         label: 'البريد الإلكتروني',
                         value: currentUser['user_email'].toString(),
-                        textColor: Colors.black87,
+                        textColor: Theme.of(context).colorScheme.surface,
                       ),
                       SizedBox(height: 10),
                       buildInfoRow(
                         icon: Icons.person,
                         label: 'اسم المستخدم',
                         value: currentUser['user_name'].toString(),
-                        textColor: Colors.black87,
+                        textColor: Theme.of(context).colorScheme.surface,
                       ),
                     ],
                   ),
@@ -127,7 +130,7 @@ class ProfilePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Card(
                 elevation: 4,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.primary,
 
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
@@ -143,10 +146,10 @@ class ProfilePage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: projectColors.mainColor,
+                          color: Theme.of(context).colorScheme.surface,
                         ),
                       ),
-                      Divider(color: projectColors.mainColor),
+                      Divider(color: Theme.of(context).colorScheme.surface),
                       SizedBox(height: 10),
                       buildInfoRow(
                         icon: Icons.work,
@@ -154,14 +157,14 @@ class ProfilePage extends StatelessWidget {
                         value: currentUser['user_role'].toString() == "donor"
                             ? "متبرع"
                             : "مستفيد",
-                        textColor: Colors.black87,
+                        textColor: Theme.of(context).colorScheme.surface,
                       ),
                       SizedBox(height: 10),
                       buildInfoRow(
                         icon: Icons.location_on,
                         label: 'العنوان',
                         value: currentUser['user_address'].toString(),
-                        textColor: Colors.black87,
+                        textColor: Theme.of(context).colorScheme.surface,
                       ),
                     ],
                   ),

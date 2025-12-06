@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sharek/main.dart';
+import 'package:sharek/services/home_serv.dart';
 import 'package:sharek/services/request_serv.dart';
 
 class RequestPage extends StatelessWidget {
@@ -23,7 +24,7 @@ class RequestPage extends StatelessWidget {
           child: Image.asset(
             'assets/images/Logo black.png',
             height: 40,
-            color: projectColors.mainColor,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
       ),
@@ -34,9 +35,9 @@ class RequestPage extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Card(
                 margin: EdgeInsets.only(bottom: 24),
-                color: Colors.white60,
+                color: Theme.of(context).colorScheme.primary,
                 elevation: 12,
-                shadowColor: Colors.black,
+                shadowColor: Theme.of(context).colorScheme.surface,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(32),
                 ),
@@ -71,12 +72,9 @@ class RequestPage extends StatelessWidget {
                                       SizedBox(width: 5),
                                       Icon(
                                         Icons.check_circle,
-                                        color: Color.fromARGB(
-                                          255,
-                                          99,
-                                          151,
-                                          110,
-                                        ),
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
                                         size: 16,
                                       ),
                                     ],
@@ -104,7 +102,7 @@ class RequestPage extends StatelessWidget {
                         child: Text(
                           item['item_name'] as String,
                           style: TextStyle(
-                            color: Colors.black,
+                            color: Theme.of(context).colorScheme.primary,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -133,8 +131,8 @@ class RequestPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    projectColors.mainColor,
-                                    Color.fromARGB(120, 99, 151, 110),
+                                    Theme.of(context).colorScheme.primary,
+                                    Theme.of(context).colorScheme.primary,
                                     Colors.transparent,
                                   ],
                                   begin: Alignment.bottomCenter,
@@ -164,7 +162,7 @@ class RequestPage extends StatelessWidget {
                           hintTextDirection: TextDirection.rtl,
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                              color: Colors.black,
+                              color: Theme.of(context).colorScheme.onPrimary,
                               width: 2.0,
                             ),
                             borderRadius: BorderRadius.circular(16),
@@ -187,7 +185,7 @@ class RequestPage extends StatelessWidget {
                         child: Text(
                           'مرفق صورة',
                           style: TextStyle(
-                            color: projectColors.mainColor,
+                            color: Theme.of(context).colorScheme.onPrimary,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -212,20 +210,26 @@ class RequestPage extends StatelessWidget {
                                     reasonController.text.trim(),
                                     file,
                                   );
+                                  //final test = HomeServ();
+                                  //test.loadChats();
                                 }
                               : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: projectColors.mainColor,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
                           ),
                           child: isLoading.value
                               ? CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.surface,
                                 )
                               : Text(
                                   "أطلب",
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

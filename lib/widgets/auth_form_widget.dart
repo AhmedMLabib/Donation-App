@@ -71,7 +71,7 @@ class _AuthFormWidgetState extends State<AuthFormWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: widget.backgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -84,34 +84,35 @@ class _AuthFormWidgetState extends State<AuthFormWidget> {
                   'assets/images/logo.png',
                   height: MediaQuery.of(context).size.height * 0.3,
                   fit: BoxFit.contain,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
               ),
               const SizedBox(height: 16),
               Text(
                 widget.title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 20),
               Text(
                 widget.subtitle,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Container(
-                  padding: const EdgeInsets.all(30),
+                  padding: EdgeInsets.all(30),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Form(
@@ -206,12 +207,16 @@ class _AuthFormWidgetState extends State<AuthFormWidget> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
                             minimumSize: const Size(double.infinity, 40),
                           ),
                           child: Text(
                             widget.buttonText,
-                            style: const TextStyle(color: Colors.white),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.surface,
+                            ),
                           ),
                         ),
                       ],

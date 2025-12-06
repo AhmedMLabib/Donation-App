@@ -51,7 +51,11 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.notifications_none_outlined, size: 35),
+          icon: Icon(
+            Icons.notifications_none_outlined,
+            size: 35,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
           onPressed: () {
             isLogin
                 ? Get.to(NotificationsPage())
@@ -63,7 +67,7 @@ class _HomePageState extends State<HomePage> {
           child: Image.asset(
             'assets/images/Logo black.png',
             height: 40,
-            color: projectColors.mainColor,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
       ),
@@ -71,7 +75,7 @@ class _HomePageState extends State<HomePage> {
         onRefresh: () async {
           await loadData();
         },
-        color: projectColors.mainColor,
+        color: Theme.of(context).colorScheme.primary,
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
@@ -80,8 +84,16 @@ class _HomePageState extends State<HomePage> {
                   ? Row(
                       textDirection: TextDirection.rtl,
                       children: [
-                        Icon(Icons.location_on),
-                        Text(currentUser["user_address"] as String),
+                        Icon(
+                          Icons.location_on,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                        Text(
+                          currentUser["user_address"] as String,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
                       ],
                     )
                   : SizedBox(),
@@ -90,8 +102,8 @@ class _HomePageState extends State<HomePage> {
               TextField(
                 controller: searchController,
                 textDirection: TextDirection.rtl,
-                style: TextStyle(color: Colors.white),
-                cursorColor: Colors.white,
+                style: TextStyle(color: Theme.of(context).colorScheme.surface),
+                cursorColor: Theme.of(context).colorScheme.surface,
                 onTapOutside: (event) {
                   if (searchController.text.isEmpty) {
                     items.value = mainItems;
@@ -101,10 +113,17 @@ class _HomePageState extends State<HomePage> {
                   filled: true,
                   fillColor: projectColors.secondaryColor,
                   hintTextDirection: TextDirection.rtl,
-                  hintStyle: TextStyle(fontSize: 16, color: Colors.white),
+                  hintStyle: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
                   hintText: 'أبحث',
                   prefixIcon: IconButton(
-                    icon: Icon(Icons.search, size: 30, color: Colors.white),
+                    icon: Icon(
+                      Icons.search,
+                      size: 30,
+                      color: Theme.of(context).colorScheme.surface,
+                    ),
                     onPressed: () {
                       final query = searchController.text.toLowerCase();
                       query.isEmpty
@@ -194,12 +213,9 @@ class _HomePageState extends State<HomePage> {
                                                       alignment:
                                                           Alignment.center,
                                                       decoration: BoxDecoration(
-                                                        color: Color.fromARGB(
-                                                          255,
-                                                          99,
-                                                          151,
-                                                          110,
-                                                        ),
+                                                        color: Theme.of(
+                                                          context,
+                                                        ).colorScheme.onPrimary,
 
                                                         borderRadius:
                                                             BorderRadius.circular(
@@ -208,8 +224,10 @@ class _HomePageState extends State<HomePage> {
                                                       ),
                                                       child: Text(
                                                         categories[index]["category"],
-                                                        style: const TextStyle(
-                                                          color: Colors.white,
+                                                        style: TextStyle(
+                                                          color: Theme.of(
+                                                            context,
+                                                          ).colorScheme.surface,
                                                         ),
                                                       ),
                                                     ),
@@ -226,7 +244,9 @@ class _HomePageState extends State<HomePage> {
                                 child: Container(
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
-                                    color: projectColors.secondaryColor,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.secondary,
                                     borderRadius: BorderRadius.circular(32),
                                   ),
 
@@ -234,7 +254,9 @@ class _HomePageState extends State<HomePage> {
                                     "...أخرى",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.surface,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -246,14 +268,18 @@ class _HomePageState extends State<HomePage> {
                               child: Container(
                                 alignment: Alignment.center,
                                 decoration: BoxDecoration(
-                                  color: projectColors.secondaryColor,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.secondary,
                                   borderRadius: BorderRadius.circular(32),
                                 ),
                                 child: Text(
                                   categories[index]["category"],
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -275,9 +301,11 @@ class _HomePageState extends State<HomePage> {
                             final item = items.value[index];
                             return Card(
                               margin: EdgeInsets.only(bottom: 24),
-                              color: Colors.white60,
+                              color: Theme.of(context).colorScheme.secondary,
                               elevation: 12,
-                              shadowColor: Colors.black,
+                              shadowColor: Theme.of(
+                                context,
+                              ).colorScheme.onPrimary,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(32),
                               ),
@@ -297,6 +325,11 @@ class _HomePageState extends State<HomePage> {
                                           Text(
                                             item['usersData']["user_address"]
                                                 as String,
+                                            style: TextStyle(
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onPrimary,
+                                            ),
                                           ),
                                           Spacer(),
                                           Column(
@@ -312,6 +345,9 @@ class _HomePageState extends State<HomePage> {
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       fontSize: 18,
+                                                      color: Theme.of(
+                                                        context,
+                                                      ).colorScheme.onPrimary,
                                                     ),
                                                   ),
                                                   if (item['usersData']['user_is_verfied']
@@ -334,6 +370,11 @@ class _HomePageState extends State<HomePage> {
                                                 item['created_at']
                                                     .toString()
                                                     .substring(0, 10),
+                                                style: TextStyle(
+                                                  color: Theme.of(
+                                                    context,
+                                                  ).colorScheme.onPrimary,
+                                                ),
                                               ),
                                             ],
                                           ),
@@ -356,7 +397,9 @@ class _HomePageState extends State<HomePage> {
                                       child: Text(
                                         item['item_name'] as String,
                                         style: TextStyle(
-                                          color: Colors.black,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onPrimary,
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -420,6 +463,9 @@ class _HomePageState extends State<HomePage> {
                           child: Text(
                             "لا يوجد تبرعات لعرضها",
                             textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
                           ),
                         ),
                 ),

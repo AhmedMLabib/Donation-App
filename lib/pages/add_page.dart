@@ -54,7 +54,7 @@ class _AddPageState extends State<AddPage> {
           child: Image.asset(
             'assets/images/Logo black.png',
             height: 40,
-            color: const Color.fromARGB(255, 99, 151, 110),
+            color: Theme.of(context).colorScheme.tertiary,
           ),
         ),
       ),
@@ -165,12 +165,7 @@ class _AddPageState extends State<AddPage> {
                               selectedOther = null;
                             });
                           },
-                          selectedColor: const Color.fromARGB(
-                            255,
-                            99,
-                            151,
-                            110,
-                          ),
+                          selectedColor: Theme.of(context).colorScheme.tertiary,
                         );
                       }).toList(),
                     ),

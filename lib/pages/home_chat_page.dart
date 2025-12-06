@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sharek/Colors/Colors.dart';
+import 'package:sharek/services/home_serv.dart';
 import 'chat_page.dart';
 
 class HomeChatPage extends StatelessWidget {
@@ -10,7 +11,7 @@ class HomeChatPage extends StatelessWidget {
   final messages = ["إزيك؟", "تمام وانت؟", "خلصت المشروع؟", "نشوفك بكرة"];
   final times = ["٠٩:١٥ ص", "١٠:٣٠ ص", "١٢:٠٠ م", "٠٥:٠٠ م"];
   final random = Random();
-
+  final homeService = HomeServ();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +21,7 @@ class HomeChatPage extends StatelessWidget {
           child: Image.asset(
             'assets/images/Logo black.png',
             height: 40,
-            color: const Color.fromARGB(255, 99, 151, 110),
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
       ),
@@ -45,14 +46,20 @@ class HomeChatPage extends StatelessWidget {
               },
               child: Container(
                 padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(color: Colors.white60),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Row(
                       textDirection: TextDirection.rtl,
                       children: [
-                        Icon(Icons.person, color: mainColor, size: 40),
+                        Icon(
+                          Icons.person,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 40,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           persons[index],
@@ -66,14 +73,18 @@ class HomeChatPage extends StatelessWidget {
                         Expanded(
                           child: Text(
                             messages[random.nextInt(messages.length)],
-                            style: TextStyle(color: secondaryColor),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         const SizedBox(width: 12),
                         Text(
                           times[random.nextInt(times.length)],
-                          style: TextStyle(color: secondaryColor),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
                         ),
                       ],
                     ),

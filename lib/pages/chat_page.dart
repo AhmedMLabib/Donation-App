@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:sharek/Colors/Colors.dart';
+import 'package:sharek/main.dart';
 import 'package:sharek/pages/profile_details_from_chat_page.dart';
 import 'package:sharek/pages/profile_page.dart';
+
+import '../widgets/msg_widget.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
@@ -13,6 +16,10 @@ class ChatPage extends StatelessWidget {
     final String name = args["name"] as String;
     final Widget profilePic = args["profilePic"] as Widget;
     final msgCont = TextEditingController();
+
+    // Reactive list for storing messages
+    final messages = <Map<String, dynamic>>[].obs;
+    var messageCounter = 0.obs;
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -32,13 +39,13 @@ class ChatPage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: mainColorDark,
+                        color: Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
                     Text(
                       "مستخدم موثق",
                       style: TextStyle(
-                        color: secondaryColorLight,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         fontSize: 14,
                       ),
                     ),
@@ -63,7 +70,25 @@ class ChatPage extends StatelessWidget {
         ),
         body: Column(
           children: [
-            Expanded(child: ListView(children: const [])),
+            // Messages List - Remove reverse: true so newest appears at bottom
+            Expanded(
+              child: Obx(
+                () => ListView.builder(
+                  // Removed reverse: true - now messages flow from top to bottom
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final message = messages[index];
+                    return MessageBubble(
+                      key: ValueKey(message['id']),
+                      text: message['text'],
+                      time: message['time'],
+                      isMe: message['isMe'],
+                      status: message['status'],
+                    );
+                  },
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -71,9 +96,13 @@ class ChatPage extends StatelessWidget {
                 children: [
                   IconButton(
                     onPressed: () {},
-                    icon: Icon(Icons.image, color: mainColor),
+                    icon: Icon(
+                      Icons.image,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                   const SizedBox(width: 8),
+
                   Expanded(
                     child: TextField(
                       controller: msgCont,
@@ -83,9 +112,11 @@ class ChatPage extends StatelessWidget {
                       textDirection: TextDirection.rtl,
                       decoration: InputDecoration(
                         hintText: "اكتب رسالة...",
-                        hintStyle: TextStyle(color: Colors.grey.shade500),
+                        hintStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.surface,
+                        ),
                         filled: true,
-                        fillColor: Colors.grey.shade100,
+                        fillColor: Theme.of(context).colorScheme.primary,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 20,
                           vertical: 14,
@@ -99,15 +130,43 @@ class ChatPage extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.send, color: mainColor),
+                    onPressed: () async {
+                      if (msgCont.text.trim().isNotEmpty) {
+                        // Add new message to the list
+                        messages.add({
+                          'id': messageCounter.value++,
+                          'text': msgCont.text,
+                          'time':
+                              '${DateTime.now().hour - 12}:${DateTime.now().minute}',
+                          'isMe': true, // Current user's message
+                          'status': MessageStatus.sent,
+                        });
+
+                        // saved the msg, sender id in a map
+                        final Map<String, dynamic> newRow = {
+                          'message': msgCont.text,
+                          'sender_id': cloud
+                              .from("usersData")
+                              .select("user_id"),
+                          'chat_id': cloud.from("chats").select('chat_id'),
+                        };
+
+                        await cloud.from('messages').insert(newRow);
+
+                        // Clear the text field after sending
+                        msgCont.clear();
+                      }
+                    },
+                    icon: Icon(
+                      Icons.send,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                 ],
               ),
             ),
           ],
         ),
-
       ),
     );
   }
