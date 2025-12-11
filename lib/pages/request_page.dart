@@ -19,12 +19,13 @@ class RequestPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.surface,
         title: Align(
           alignment: Alignment.centerRight,
           child: Image.asset(
             'assets/images/Logo black.png',
             height: 40,
-            color: Theme.of(context).colorScheme.onPrimary,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
       ),
@@ -35,7 +36,7 @@ class RequestPage extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Card(
                 margin: EdgeInsets.only(bottom: 24),
-                color: Theme.of(context).colorScheme.primary,
+                color: Theme.of(context).colorScheme.surface,
                 elevation: 12,
                 shadowColor: Theme.of(context).colorScheme.surface,
                 shape: RoundedRectangleBorder(
@@ -131,9 +132,20 @@ class RequestPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    Theme.of(context).colorScheme.primary,
-                                    Theme.of(context).colorScheme.primary,
-                                    Colors.transparent,
+                                    Color.fromARGB(
+                                                    255,
+                                                    99,
+                                                    151,
+                                                    110,
+                                                  ),
+                                                  Color.fromARGB(
+                                                    120,
+                                                    99,
+                                                    151,
+                                                    110,
+                                                  ),
+
+                                                  Colors.transparent,
                                   ],
                                   begin: Alignment.bottomCenter,
                                   end: Alignment.topCenter,
@@ -210,8 +222,7 @@ class RequestPage extends StatelessWidget {
                                     reasonController.text.trim(),
                                     file,
                                   );
-                                  //final test = HomeServ();
-                                  //test.loadChats();
+                                
                                 }
                               : null,
                           style: ElevatedButton.styleFrom(

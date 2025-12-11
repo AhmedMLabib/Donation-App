@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:sharek/services/home_serv.dart';
 import 'package:sharek/services/utils.dart';
 
 import '../main.dart';
@@ -25,9 +26,27 @@ class RequestServ {
       });
 
       //*
-      await cloud.from("chats").insert({
-        "user_one_id": donorId,
-        "user_two_id": recipientId,
+      final existingChats = await cloud
+          .from("chats")
+          .select()
+          .or(
+            "and(user_one_id.eq.$donorId,user_two_id.eq.$recipientId),"
+            "and(user_one_id.eq.$recipientId,user_two_id.eq.$donorId)",
+          );
+
+      if (existingChats.isEmpty) {
+        await cloud.from("chats").insert({
+          "user_one_id": donorId,
+          "user_two_id": recipientId,
+        });
+      }
+
+      await HomeServ().addNotification({
+        "notification_title": "وصلك طلب جديد من ${currentUser["user_name"]}",
+        "notification_text":
+            "${currentUser["user_name"]} يطلب ${item["item_name"]}",
+        "notification_status": "unread",
+        "user_id": donorId,
       });
 
       Get.back();

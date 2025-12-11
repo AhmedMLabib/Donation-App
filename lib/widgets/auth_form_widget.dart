@@ -33,6 +33,7 @@ class AuthFormWidget extends StatefulWidget {
 class _AuthFormWidgetState extends State<AuthFormWidget> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {};
+  final isLoading = false.obs;
   bool _agreeToTerms = false;
   @override
   void initState() {
@@ -184,39 +185,51 @@ class _AuthFormWidgetState extends State<AuthFormWidget> {
                               setState(() => _agreeToTerms = val ?? false),
                         ),
                         const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              if (!_agreeToTerms) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'يجب الموافقة على الشروط والأحكام أولاً',
+                        Obx(
+                          () => ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                if (!_agreeToTerms) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        'يجب الموافقة على الشروط والأحكام أولاً',
+                                      ),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                isLoading.value = true;
+                                // هنا نقبل أي يوزر مباشرة بدون تسجيل للتجربه
+                                final formData = _getFormData();
+                                if (widget.showRole) {
+                                  formData['role'] = _selectedRole;
+                                  formData['file'] = file;
+                                }
+                                widget.onSubmit(formData);
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.primary,
+                              minimumSize: const Size(double.infinity, 40),
+                            ),
+                            child: isLoading.value
+                                ? CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
+                                  )
+                                : Text(
+                                    widget.buttonText,
+                                    style: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.surface,
                                     ),
                                   ),
-                                );
-                                return;
-                              }
-                              // هنا نقبل أي يوزر مباشرة بدون تسجيل للتجربه
-                              final formData = _getFormData();
-                              if (widget.showRole) {
-                                formData['role'] = _selectedRole;
-                                formData['file'] = file;
-                              }
-                              widget.onSubmit(formData);
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Theme.of(
-                              context,
-                            ).colorScheme.primary,
-                            minimumSize: const Size(double.infinity, 40),
-                          ),
-                          child: Text(
-                            widget.buttonText,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.surface,
-                            ),
                           ),
                         ),
                       ],

@@ -47,12 +47,13 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.surface,
         title: Align(
           alignment: Alignment.centerRight,
           child: Image.asset(
             'assets/images/Logo black.png',
             height: 40,
-            color: projectColors.mainColor,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
       ),
@@ -89,7 +90,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                 color: projectColors.mainColor,
                               ),
                             ),
-                            subtitle: Text(notification["notification_text"]),
+                            subtitle: Text(
+                              textDirection: TextDirection.rtl,
+                              notification["notification_text"],
+                              style: TextStyle(color: (Colors.black)),
+                            ),
                             trailing:
                                 notification["notification_status"] == "read"
                                 ? null

@@ -34,7 +34,7 @@ class LocationService {
     final places = await placemarkFromCoordinates(pos.latitude, pos.longitude);
 
     final location =
-        "${places.first.name}, ${places.first.locality}, ${places.first.country}";
+        "${places.first.locality}, ${places.first.country}";
     return location;
   }
 }

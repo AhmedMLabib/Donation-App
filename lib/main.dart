@@ -3,13 +3,18 @@ import 'package:get/get.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:sharek/Theme/theme.dart';
 import 'package:sharek/pages/main_screen.dart';
+import 'package:sharek/services/local_storge.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'Colors/project_colors.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await LocalStorageService.init();
 
+  mode.value = LocalStorageService.loadMode();
+  currentUser = LocalStorageService.loadCurrentUser();
+  isLogin = LocalStorageService.loadIsLogin();
   await Supabase.initialize(
     url: 'https://ymmisbcfqrotkrlfsbzo.supabase.co',
     anonKey:
@@ -19,6 +24,7 @@ Future<void> main() async {
 }
 
 final cloud = Supabase.instance.client;
+var mode = 'system'.obs; // 'light' , 'dark' , 'system'
 var isLogin = false;
 final projectColors = ProjectColors();
 var currentUser = {
@@ -36,12 +42,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MainScreen(),
-      theme: lightMode,
-      darkTheme: darkMode,
-      themeMode: ThemeMode.system,
+    return Obx(
+      () => GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: MainScreen(),
+        theme: lightMode,
+        darkTheme: darkMode,
+        // themeMode: ThemeMode.system,
+        themeMode: mode.value == 'system'
+            ? ThemeMode.system
+            : mode.value == "light"
+            ? ThemeMode.light
+            : ThemeMode.dark,
+      ),
     );
   }
 }

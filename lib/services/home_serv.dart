@@ -36,7 +36,6 @@ class HomeServ {
       final catRes = await cloud
           .from("categories")
           .select("category_id , category");
-      print(catRes);
       return catRes;
     } catch (e) {
       Get.snackbar(
@@ -73,16 +72,76 @@ class HomeServ {
     }
   }
 
+  addNotification(notiObj) async {
+    try {
+      await cloud.from('notifications').insert(notiObj);
+    } catch (err) {
+      Get.snackbar("اشعارات", "تعذر اضافة الاشعار");
+    }
+  }
+
   loadChats() async {
     try {
       final chat = await cloud.from("chats").select("*");
       return chat;
     } catch (e) {
-      print("errorrrr $e");
       Get.snackbar(
         "خطأ في جلب المحادثات",
         "حدث خطأ ما اثناء جلب المحادثات، حاول مرة اخرى",
       );
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getUserChats(int myId) async {
+    try {
+      final chats = await cloud
+          .from("chats")
+          .select()
+          .or("user_one_id.eq.$myId,user_two_id.eq.$myId");
+
+      List<Map<String, dynamic>> result = [];
+
+      for (final chat in chats) {
+        final chatId = chat["chat_id"];
+        final userOne = chat["user_one_id"];
+        final userTwo = chat["user_two_id"];
+        final otherUserId = userOne == myId ? userTwo : userOne;
+
+        final user = await cloud
+            .from("usersData")
+            .select()
+            .eq("user_id", otherUserId)
+            .single();
+
+        final msgs = await cloud
+            .from("messages")
+            .select()
+            .eq("chat_id", chatId)
+            .order("created_at", ascending: false)
+            .limit(1);
+
+        String lastMsg = "";
+        String lastTime = "";
+
+        if (msgs.isNotEmpty) {
+          lastMsg = msgs[0]["message"];
+          lastTime = msgs[0]["created_at"];
+        }
+
+        result.add({
+          "chat_id": chatId,
+          "user_name": user["user_name"],
+          "user_image": user["user_image_url"],
+          "last_msg": lastMsg,
+          "last_time": lastTime,
+          "other_id": otherUserId,
+        });
+      }
+
+      return result;
+    } catch (e) {
+      print("Error in getUserChats: $e");
       return [];
     }
   }

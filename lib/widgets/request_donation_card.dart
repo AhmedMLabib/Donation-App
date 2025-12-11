@@ -42,7 +42,7 @@ class RequestDonationCard extends StatelessWidget {
                   ),
                   child: Text(
                     buttonText!,
-                    style: const TextStyle(fontSize: 12),
+                    style: const TextStyle(fontSize: 12,fontWeight: FontWeight.bold, color: Colors.white),
                     textAlign: TextAlign.center,
                   ),
                 ),

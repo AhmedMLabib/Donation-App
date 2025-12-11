@@ -27,18 +27,24 @@ class RequestsServ {
     }
   }
 
-  deleteRequest(int reqId) async {
+  deleteRequest(req) async {
     if (!await Utils().connected()) {
       Get.snackbar("خطأ في الاتصال", "تأكد من اتصالك بالانترنت وحاول مرة اخرى");
       return false;
     }
     try {
+      final att = req['attachment'];
+
+    if (att != null && att is String && att.isNotEmpty) {
+      await Utils().removImage(att);
+    }
       final response = await cloud
           .from("requests")
           .delete()
-          .eq("request_id", reqId);
+          .eq("request_id", req['request_id']);
       return true;
     } catch (e) {
+      print("Error deleting request: $e");
       Get.snackbar(
         "خطأ في حذف التبرع",
         "حدث خطأ ما اثناء حذف التبرع، حاول مرة اخرى",

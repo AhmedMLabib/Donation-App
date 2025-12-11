@@ -31,6 +31,7 @@ class _MyRequestsPageState extends State<MyRequestsPage> {
         length: 1,
         child: Scaffold(
           appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.surface,
             title: const Text(
               'طلباتي',
               style: TextStyle(
@@ -45,28 +46,37 @@ class _MyRequestsPageState extends State<MyRequestsPage> {
             children: [
               // التبويب الأول: طلبات غير مكتملة
               Obx(
-                () => ListView.builder(
-                  itemCount: requests.length,
-                  itemBuilder: (context, index) {
-                    final request = requests[index];
-                    return RequestDonationCard(
-                      imagePath: request['attachment'],
-                      title: request['req_reason'],
-                      status: request["status"],
-                      buttonText: 'إلغاء الطلب',
-                      onButtonPressed: () {
-                        RequestsServ()
-                            .deleteRequest(request['request_id'])
-                            .then((success) {
-                              if (success) {
-                                requests.removeAt(index);
-                              }
-                            });
-                      },
-                    );
-                  },
-                  padding: const EdgeInsets.all(10),
-                ),
+                () => requests.value.isNotEmpty
+                    ? ListView.builder(
+                        itemCount: requests.length,
+                        itemBuilder: (context, index) {
+                          final request = requests[index];
+                          return RequestDonationCard(
+                            imagePath: request['attachment'],
+                            title: request['req_reason'],
+                            status: request["status"],
+                            buttonText: 'إلغاء الطلب',
+                            onButtonPressed: () {
+                              RequestsServ()
+                                  .deleteRequest(request)
+                                  .then((success) {
+                                    if (success) {
+                                      requests.removeAt(index);
+                                    }
+                                  });
+                            },
+                          );
+                        },
+                        padding: const EdgeInsets.all(10),
+                      )
+                    : Center(
+                        child: Text(
+                          "لا يوجد طلبات لعرضها",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
+                      ),
               ),
             ],
           ),

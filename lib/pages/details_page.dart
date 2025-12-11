@@ -10,12 +10,13 @@ class DetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.surface,
         title: Align(
           alignment: Alignment.centerRight,
           child: Image.asset(
             'assets/images/Logo black.png',
             height: 40,
-            color: Theme.of(context).colorScheme.onPrimary,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
       ),
@@ -50,8 +51,8 @@ class DetailsPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            Theme.of(context).colorScheme.surface,
-                            Theme.of(context).colorScheme.surface,
+                            Color.fromARGB(255, 99, 151, 110),
+                            Color.fromARGB(120, 99, 151, 110),
 
                             Colors.transparent,
                           ],
@@ -65,8 +66,8 @@ class DetailsPage extends StatelessWidget {
               ),
               SizedBox(height: 10),
               Card(
-                color: Theme.of(context).colorScheme.primary,
-                shadowColor: Theme.of(context).colorScheme.surface,
+                color: Theme.of(context).colorScheme.surface,
+                shadowColor: Theme.of(context).colorScheme.onPrimary,
                 elevation: 7,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -79,11 +80,15 @@ class DetailsPage extends StatelessWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14,
+                              color: Theme.of(context).colorScheme.onPrimary,
                             ),
                           ),
                           Text(
                             item["created_at"].toString().substring(0, 10),
-                            style: TextStyle(fontSize: 12),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
                           ),
                         ],
                       ),
@@ -98,6 +103,7 @@ class DetailsPage extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15,
+                                color: Theme.of(context).colorScheme.onPrimary,
                               ),
                             ),
                             Text(
@@ -127,7 +133,11 @@ class DetailsPage extends StatelessWidget {
               Text(
                 item["item_name"] as String,
                 textDirection: TextDirection.rtl,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               ),
               SizedBox(height: 10),
               Text(
@@ -135,7 +145,7 @@ class DetailsPage extends StatelessWidget {
                 textDirection: TextDirection.rtl,
                 style: TextStyle(
                   fontSize: 18,
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.secondary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -167,6 +177,9 @@ class DetailsPage extends StatelessWidget {
               ),
             ],
           ),
+        
+        
+        
         ),
       ),
     );

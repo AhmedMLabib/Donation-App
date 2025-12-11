@@ -35,4 +35,16 @@ class Utils {
       return "";
     }
   }
+
+  removImage(fullImagePath) async {
+    final uri = Uri.parse(fullImagePath);
+    final segments = uri.pathSegments;
+    final imagePath = segments.last;
+    final res = await cloud.storage.from("Images").remove([imagePath]);
+    if (res.isEmpty) {
+      print("تم مسح الصورة بنجاح");
+    } else {
+      print("فشل حذف الصورة: $res");
+    }
+  }
 }

@@ -54,52 +54,50 @@ class WelcomeWidget extends StatelessWidget {
                 ),
               ),
             ),
-             Container(
-                color: Theme.of(context).colorScheme.surface,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 40,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Align(
-                        alignment: Alignment.topCenter,
-                        child: Image.asset(
-                          'assets/images/logo.png',
-                          height: MediaQuery.of(context).size.height * 0.2,
-                          fit: BoxFit.contain,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+            Container(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 30,
+                  vertical: 40,
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Align(
+                      alignment: Alignment.topCenter,
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        fit: BoxFit.contain,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
-                      const SizedBox(height: 20),
-                      ...buttons.map(
-                        (b) => Padding(
-                          padding: const EdgeInsets.only(bottom: 20),
-                          child: ElevatedButton(
-                            onPressed: b['onPressed'],
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(
-                                context,
-                              ).colorScheme.onPrimary,
-                              minimumSize: const Size(double.infinity, 50),
-                            ),
-                            child: Text(
-                              b['text'],
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.surface,
-                                fontSize: 18,
-                              ),
+                    ),
+                    const SizedBox(height: 20),
+                    ...buttons.map(
+                      (b) => Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: ElevatedButton(
+                          onPressed: b['onPressed'],
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary,
+                            minimumSize: const Size(double.infinity, 50),
+                          ),
+                          child: Text(
+                            b['text'],
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.surface,
+                              fontSize: 18,
                             ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            
+            ),
           ],
         ),
       ),

@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
           child: Image.asset(
             'assets/images/Logo black.png',
             height: 40,
-            color: Theme.of(context).colorScheme.onPrimary,
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
       ),
@@ -151,7 +151,7 @@ class _HomePageState extends State<HomePage> {
               Obx(
                 () => categories.isNotEmpty
                     ? Directionality(
-                        textDirection: TextDirection.rtl,
+                        textDirection: TextDirection.ltr,
                         child: GridView.builder(
                           shrinkWrap: true,
 
@@ -302,7 +302,7 @@ class _HomePageState extends State<HomePage> {
                             final item = items.value[index];
                             return Card(
                               margin: EdgeInsets.only(bottom: 24),
-                              color: Theme.of(context).colorScheme.secondary,
+                              color: Theme.of(context).colorScheme.surface,
                               elevation: 12,
                               shadowColor: Theme.of(
                                 context,
@@ -323,13 +323,15 @@ class _HomePageState extends State<HomePage> {
                                       child: Row(
                                         children: [
                                           Icon(Icons.location_on, size: 16),
-                                          Text(
-                                            item['usersData']["user_address"]
-                                                as String,
-                                            style: TextStyle(
-                                              color: Theme.of(
-                                                context,
-                                              ).colorScheme.onPrimary,
+                                          Expanded(
+                                            child: Text(
+                                              item['usersData']["user_address"]
+                                                  as String,
+                                              style: TextStyle(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onPrimary,
+                                              ),
                                             ),
                                           ),
                                           Spacer(),
@@ -342,6 +344,7 @@ class _HomePageState extends State<HomePage> {
                                                   Text(
                                                     item['usersData']['user_name']
                                                         as String,
+
                                                     style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.bold,
