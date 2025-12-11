@@ -7,19 +7,119 @@ import 'package:sharek/pages/profile_page.dart';
 
 import '../widgets/msg_widget.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final args = Get.arguments as Map<String, Object>;
-    final String name = args["name"] as String;
-    final Widget profilePic = args["profilePic"] as Widget;
-    final msgCont = TextEditingController();
+  State<ChatPage> createState() => _ChatPageState();
+}
 
-    // Reactive list for storing messages
-    final messages = <Map<String, dynamic>>[].obs;
-    var messageCounter = 0.obs;
+class _ChatPageState extends State<ChatPage> {
+  late final TextEditingController msgCont;
+  final messages = <Map<String, dynamic>>[].obs;
+
+  String formatTime(dynamic time) {
+    if (time == null) return "";
+    final text = time.toString();
+    if (text.contains("T") && text.length >= 16) {
+      return text.substring(11, 16);
+    }
+    return text;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    msgCont = TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadOldMessages());
+  }
+
+  @override
+  void dispose() {
+    msgCont.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadOldMessages() async {
+    try {
+      final args = Get.arguments as Map<String, dynamic>?;
+      if (args == null) return;
+
+      final chatId = args["chat_id"];
+      final myId = currentUser["user_id"];
+
+      messages.clear();
+
+      final data = await cloud
+          .from("messages")
+          .select()
+          .eq("chat_id", chatId)
+          .order("created_at", ascending: true);
+
+      for (var m in data) {
+        messages.add({
+          'id': m["message_id"] ?? m["id"],
+          'text': m["message"] ?? "",
+          'time': m["created_at"] != null ? formatTime(m["created_at"]) : "",
+          'isMe': m["sender_id"] == myId,
+          'status': MessageStatus.sent,
+        });
+      }
+    } catch (e) {
+      print("Error loading messages: $e");
+      Get.snackbar("خطأ", "فشل في تحميل الرسائل");
+    }
+  }
+
+  Future<void> _sendMessage() async {
+    final args = Get.arguments as Map<String, dynamic>?;
+    if (args == null) return;
+
+    final chatId = args["chat_id"];
+    final myId = currentUser["user_id"];
+    final text = msgCont.text.trim();
+
+    if (text.isEmpty) return;
+
+    final localId = DateTime.now().millisecondsSinceEpoch;
+    messages.add({
+      'id': localId,
+      'text': text,
+      'time': formatTime(DateTime.now().toIso8601String()),
+      'isMe': true,
+      'status': MessageStatus.sending,
+    });
+
+    msgCont.clear();
+
+    try {
+      final inserted = await cloud
+          .from('messages')
+          .insert({"chat_id": chatId, "sender_id": myId, "message": text})
+          .select()
+          .single();
+
+      final idx = messages.indexWhere((m) => m["id"] == localId);
+      if (idx != -1) {
+        messages[idx] = {
+          'id': inserted["message_id"],
+          'text': inserted["message"],
+          'time': formatTime(inserted["created_at"]),
+          'isMe': true,
+          'status': MessageStatus.sent,
+        };
+      }
+    } catch (e) {
+      print("Error sending: $e");
+      Get.snackbar("خطأ", "فشل في إرسال الرسالة");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final args = Get.arguments as Map<String, dynamic>? ?? {};
+    final String name = args["name"] ?? "";
+    final profilePic = args["profilePic"];
 
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -27,143 +127,108 @@ class ChatPage extends StatelessWidget {
         appBar: AppBar(
           title: Row(
             children: [
-              profilePic,
-              const SizedBox(width: 6),
-              InkWell(
-                onTap: () => Get.to(ProfilePage()),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      name,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                      ),
-                    ),
-                    Text(
-                      "مستخدم موثق",
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
+              CircleAvatar(
+                radius: 22,
+                backgroundImage: profilePic != null
+                    ? NetworkImage(profilePic)
+                    : null,
+                child: profilePic == null ? Icon(Icons.person) : null,
               ),
+              SizedBox(width: 6),
+              Text(name),
             ],
           ),
-          actions: [
-            IconButton(
-              onPressed: () {
-                Get.to(
-                  () => ProfileDetailsFromChat(),
-                  transition: Transition.rightToLeft,
-                  arguments: [name, profilePic],
-                );
-              },
-              icon: const Icon(Icons.more_vert, size: 28),
-            ),
-          ],
-          backgroundColor: secondaryColor,
         ),
         body: Column(
           children: [
-            // Messages List - Remove reverse: true so newest appears at bottom
             Expanded(
               child: Obx(
                 () => ListView.builder(
-                  // Removed reverse: true - now messages flow from top to bottom
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
-                    final message = messages[index];
+                    final msg = messages[index];
                     return MessageBubble(
-                      key: ValueKey(message['id']),
-                      text: message['text'],
-                      time: message['time'],
-                      isMe: message['isMe'],
-                      status: message['status'],
+                      text: msg["text"],
+                      time: msg["time"],
+                      isMe: msg["isMe"],
+                      status: msg["status"],
                     );
                   },
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                textDirection: TextDirection.rtl,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.image,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: SafeArea(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.06),
+                            blurRadius: 6,
+                            offset: Offset(0, -2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade200,
+                                borderRadius: BorderRadius.circular(28),
+                              ),
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxHeight: 120, // 4 lines
+                                ),
+                                child: TextField(
+                                  controller: msgCont,
+                                  keyboardType: TextInputType.multiline,
+                                  minLines: 1,
+                                  maxLines: 4,
+                                  textDirection: TextDirection.rtl,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: "اكتب رسالة...",
+                                    hintStyle: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.surface,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          CircleAvatar(
+                            radius: 24,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary,
 
-                  Expanded(
-                    child: TextField(
-                      controller: msgCont,
-                      minLines: 1,
-                      maxLines: 4,
-                      keyboardType: TextInputType.multiline,
-                      textDirection: TextDirection.rtl,
-                      decoration: InputDecoration(
-                        hintText: "اكتب رسالة...",
-                        hintStyle: TextStyle(
-                          color: Theme.of(context).colorScheme.surface,
-                        ),
-                        filled: true,
-                        fillColor: Theme.of(context).colorScheme.primary,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 14,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide.none,
-                        ),
+                            child: IconButton(
+                              icon: const Icon(Icons.send, color: Colors.white),
+                              onPressed: _sendMessage,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    onPressed: () async {
-                      if (msgCont.text.trim().isNotEmpty) {
-                        // Add new message to the list
-                        messages.add({
-                          'id': messageCounter.value++,
-                          'text': msgCont.text,
-                          'time':
-                              '${DateTime.now().hour - 12}:${DateTime.now().minute}',
-                          'isMe': true, // Current user's message
-                          'status': MessageStatus.sent,
-                        });
-
-                        // saved the msg, sender id in a map
-                        final Map<String, dynamic> newRow = {
-                          'message': msgCont.text,
-                          'sender_id': cloud
-                              .from("usersData")
-                              .select("user_id"),
-                          'chat_id': cloud.from("chats").select('chat_id'),
-                        };
-
-                        await cloud.from('messages').insert(newRow);
-
-                        // Clear the text field after sending
-                        msgCont.clear();
-                      }
-                    },
-                    icon: Icon(
-                      Icons.send,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
