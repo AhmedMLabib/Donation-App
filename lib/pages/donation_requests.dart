@@ -31,8 +31,7 @@ class _DonationRequestsState extends State<DonationRequests> {
       appBar: AppBar(title: const Text('طلبات التبرع')),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: requests.isNotEmpty
-            ? Obx(
+        child: Obx(
                 () => ListView.builder(
                   itemCount: requests.length,
                   itemBuilder: (context, index) {
@@ -196,14 +195,7 @@ class _DonationRequestsState extends State<DonationRequests> {
                   },
                 ),
               )
-            : Center(
-                child: Text(
-                  "لا يوجد طلبات لعرضها",
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                ),
-              ),
+            
       ),
     );
   }
