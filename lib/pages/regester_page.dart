@@ -26,7 +26,7 @@ class _RegesterPageState extends State<RegesterPage> {
 
   // Controller for address field
   final addressController = TextEditingController();
-
+  var pass = '';
   @override
   void initState() {
     super.initState();
@@ -70,6 +70,7 @@ class _RegesterPageState extends State<RegesterPage> {
           'label': 'password',
           'obscure': true,
           'validator': (value) {
+            pass = value;
             if (value == null || value.isEmpty) return 'أدخل كلمة المرور';
             if (value.length < 6) return 'كلمة المرور قصيرة جدًا';
             return null;
@@ -79,9 +80,9 @@ class _RegesterPageState extends State<RegesterPage> {
           'label': 'rePassword',
           'obscure': true,
           'validator': (value) {
-            if (value != null && value.isEmpty) {
-              return 'كلمة المرور غير متطابقة';
-            }
+            if (value == null || value.isEmpty) return 'أدخل كلمة المرور';
+            if (value.length < 6) return 'كلمة المرور قصيرة جدًا';
+            if (pass != value) return 'كلمة المرور غير مطابقة';
             return null;
           },
         },
