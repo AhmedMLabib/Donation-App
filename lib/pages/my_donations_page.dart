@@ -47,7 +47,7 @@ class _MyDonationsPageState extends State<MyDonationsPage> {
           body: TabBarView(
             children: [
               Obx(
-                () => items.value.isNotEmpty
+                () => items.isNotEmpty
                     ? ListView.builder(
                         padding: const EdgeInsets.all(10),
                         itemCount: items.length,

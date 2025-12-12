@@ -46,7 +46,7 @@ class _MyRequestsPageState extends State<MyRequestsPage> {
             children: [
               // التبويب الأول: طلبات غير مكتملة
               Obx(
-                () => requests.value.isNotEmpty
+                () => requests.isNotEmpty
                     ? ListView.builder(
                         itemCount: requests.length,
                         itemBuilder: (context, index) {

@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sharek/main.dart';
-import 'package:sharek/services/home_serv.dart';
 import 'package:sharek/services/request_serv.dart';
 
 class RequestPage extends StatelessWidget {
@@ -132,20 +130,10 @@ class RequestPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    Color.fromARGB(
-                                                    255,
-                                                    99,
-                                                    151,
-                                                    110,
-                                                  ),
-                                                  Color.fromARGB(
-                                                    120,
-                                                    99,
-                                                    151,
-                                                    110,
-                                                  ),
+                                    Color.fromARGB(255, 99, 151, 110),
+                                    Color.fromARGB(120, 99, 151, 110),
 
-                                                  Colors.transparent,
+                                    Colors.transparent,
                                   ],
                                   begin: Alignment.bottomCenter,
                                   end: Alignment.topCenter,
@@ -222,7 +210,6 @@ class RequestPage extends StatelessWidget {
                                     reasonController.text.trim(),
                                     file,
                                   );
-                                
                                 }
                               : null,
                           style: ElevatedButton.styleFrom(

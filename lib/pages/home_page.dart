@@ -299,7 +299,7 @@ class _HomePageState extends State<HomePage> {
                   () => items.isNotEmpty
                       ? ListView.builder(
                           itemBuilder: (context, index) {
-                            final item = items.value[index];
+                            final item = items[index];
                             return Card(
                               margin: EdgeInsets.only(bottom: 24),
                               color: Theme.of(context).colorScheme.surface,

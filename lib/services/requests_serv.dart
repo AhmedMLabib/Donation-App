@@ -38,7 +38,7 @@ class RequestsServ {
     if (att != null && att is String && att.isNotEmpty) {
       await Utils().removImage(att);
     }
-      final response = await cloud
+      await cloud
           .from("requests")
           .delete()
           .eq("request_id", req['request_id']);

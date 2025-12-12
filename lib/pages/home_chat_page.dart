@@ -1,7 +1,5 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sharek/Colors/Colors.dart';
 import 'package:sharek/services/home_serv.dart';
 import '../main.dart';
 import 'chat_page.dart';
